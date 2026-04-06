@@ -5,8 +5,7 @@
   "name": "Visotaris OPMod",
   "description": "OPSUCHT-Client-Komfort-Mod: Marktpreise, Jobtracker, HUD, Amboss-Normalisierung, OffhandBlocker u.v.m.",
   "authors": [
-    "DiamantTh",
-    "GitHub Copilot"
+    "DiamantTh"
   ],
   "contact": {
     "sources": "https://github.com/DiamantTh/no-op-mod"
