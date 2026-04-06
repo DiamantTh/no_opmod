@@ -3,6 +3,7 @@ package systems.diath.noopmod;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -117,6 +118,14 @@ public class NoOpModClient implements ClientModInitializer {
 
         // 9. Keybinds registrieren
         keybindService.registerTick();
+
+        // 10. Offhand-Blocker: Tastendrücke für F-Taste vor handleInputEvents() schlucken
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            if (!configManager.getConfig().enableOffhandBlocker) return;
+            if (client.options == null) return;
+            //noinspection StatementWithEmptyBody
+            while (client.options.swapHandsKey.wasPressed()) { /* blockiert */ }
+        });
 
         NoOpLogger.info("{} v{} initialisiert (MC 1.21.4).", MOD_NAME,
             NoOpModClient.class.getPackage().getImplementationVersion());

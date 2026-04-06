@@ -28,6 +28,8 @@
   "noopmod.config.enable_sign_protection": "Sign protection",
   "noopmod.config.enable_offhand_blocker": "Offhand blocker",
   "noopmod.config.enable_inventory_warning": "Inventory full warning",
+  "noopmod.config.enable_command_shortforms": "Command shortforms",
+  "noopmod.config.enable_anvil_normalization": "Anvil normalization",
   "noopmod.config.market_refresh_interval": "Market refresh interval (s)",
   "noopmod.config.merchant_refresh_interval": "Merchant refresh interval (s)",
   "key.categories.noopmod": "No OP.Mod",

@@ -61,6 +61,8 @@ public final class NoOpConfigScreen extends Screen {
                v -> cfg.showQuickButtons = v);         y += BTN_H + BTN_GAP;
         toggle(lx, y, "Shulker-Rekursion",       cfg.shulkerRecursion,
                v -> cfg.shulkerRecursion = v);         y += BTN_H + BTN_GAP;
+        toggle(lx, y, "Amboss-Normalisierung",   cfg.enableAnvilNormalization,
+               v -> cfg.enableAnvilNormalization = v); y += BTN_H + BTN_GAP;
 
         // Rechte Spalte: Schutz & Tracker
         int rx = cx + COL_GAP / 2;
@@ -75,10 +77,15 @@ public final class NoOpConfigScreen extends Screen {
         toggle(rx, y, "Offhand-Blocker",         cfg.enableOffhandBlocker,
                v -> cfg.enableOffhandBlocker = v);     y += BTN_H + BTN_GAP;
         toggle(rx, y, "Inventar-Warnung",        cfg.enableInventoryWarning,
-               v -> cfg.enableInventoryWarning = v);
+               v -> cfg.enableInventoryWarning = v);   y += BTN_H + BTN_GAP;
+        toggle(rx, y, "Command-Kurzformen",      cfg.enableCommandShortforms,
+               v -> cfg.enableCommandShortforms = v);  y += BTN_H + BTN_GAP;
+        toggle(rx, y, "Discord Rich Presence",   cfg.enableDiscordRpc,
+               v -> cfg.enableDiscordRpc = v);
 
         // Interval-Cycling (zentriert unterhalb der Spalten)
-        int iy = 36 + 5 * (BTN_H + BTN_GAP) + 10;
+        // Linke Spalte hat 6 Einträge, rechte 7 → nach der längeren ausrichten
+        int iy = 36 + 7 * (BTN_H + BTN_GAP) + 10;
         addCycling(cx - BTN_W - COL_GAP / 2, iy, "Markt-Refresh",
             cfg.marketRefreshIntervalSeconds, v -> cfg.marketRefreshIntervalSeconds = v);
         addCycling(cx + COL_GAP / 2, iy, "Merchant-Refresh",

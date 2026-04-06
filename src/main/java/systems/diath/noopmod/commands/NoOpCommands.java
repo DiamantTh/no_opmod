@@ -21,8 +21,6 @@ import systems.diath.noopmod.services.PendingConfirmationService;
  *   /noopmod refresh   – Markt & Shard-Daten sofort neu laden
  *   /noopmod tracker   – aktuellen Job-Snapshot ausgeben
  *   /noopmod status    – Mod-Status anzeigen
- *
- * Phase 3 TODO:
  *   /noopmod settings  – Config-Screen öffnen
  */
 public final class NoOpCommands {

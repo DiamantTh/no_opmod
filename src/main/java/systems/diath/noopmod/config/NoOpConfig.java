@@ -35,6 +35,10 @@ public final class NoOpConfig {
     public boolean showQuickButtons     = true;
     public boolean shulkerRecursion     = true;
 
+    // ── Amboss-Normalisierung ─────────────────────────────────────────────────
+    // Kurzformen (1k, 2.5m, …) im Amboss-Umbenennenfeld zu vollen Zahlen expandieren
+    public boolean enableAnvilNormalization = true;
+
     // ── Discord Rich Presence ─────────────────────────────────────────────────
     // Standard: deaktiviert (andere RPC-Mods haben Vorrang)
     public boolean enableDiscordRpc = false;
