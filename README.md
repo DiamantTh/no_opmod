@@ -1,7 +1,7 @@
 # No OP.Mod
 
 Eine **freie, quelloffene** Fabric-Client-Mod für Minecraft mit Fokus auf den
-[OPSUCHT](https://opsucht.de)-Server.
+[OPSUCHT](https://opsucht.net)-Server.
 
 Lizenz: [AGPLv3+](LICENSE) · Minecraft: 1.21.4 / 1.21.11 · Loader: Fabric
 
@@ -47,9 +47,11 @@ sondern entstand aus zwei konkreten Gründen:
 
 **1. Lizenz und Quelloffenheit**  
 OPMOD wird unter einer *All Rights Reserved*-Lizenz vertrieben. Quellcode ist
-nicht öffentlich zugänglich. Für Nutzer, die Wert auf freie und nachprüfbare
-Software legen (FOSS-Prinzip), ist das keine geeignete Grundlage – unabhängig
-von der Qualität der Mod selbst.
+nicht öffentlich zugänglich. Für mich ist Open Source keine bloße Präferenz,
+sondern eine Grundüberzeugung: FOSS ist in vielen Ökosystemen wichtig – von
+Betriebssystemen über Frameworks bis zu Spielmods. Ich schaue mir auch
+nicht-FOSS-Projekte an und schätze sie, aber wenn ich selbst etwas baue, dann
+offen und nachvollziehbar.
 
 **2. Eigene Kontrolle über die Implementierung**  
 Eine eigene Codebasis erlaubt es, Designentscheidungen selbst zu treffen,
@@ -57,8 +59,9 @@ auf Probleme schnell zu reagieren und die Mod ohne Abhängigkeit von der
 Entwicklung Dritter weiterzupflegen.
 
 Dieser Mod ist **keine Kritik** an den Entwicklern von OPMOD. Die Entscheidung
-für eine proprietäre Lizenz ist legitim. No OP.Mod ist schlicht die freie
-Alternative für alle, die das bevorzugen.
+für eine proprietäre Lizenz ist legitim – jedes Team trifft diese Entscheidung
+aus eigenen Gründen, und das ist ihr gutes Recht. No OP.Mod ist die freie
+Alternative für alle, denen Quelloffenheit bei Software wichtig ist.
 
 ---
 
