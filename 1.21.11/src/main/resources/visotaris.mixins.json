@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "systems.diath.visotaris.hooks",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "HandledScreenMixin",
+    "HandledScreenClickMixin",
+    "AnvilScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

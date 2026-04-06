@@ -44,7 +44,7 @@ dependencies {
 }
 
 loom {
-    accessWidenerPath = rootProject.file("src/main/resources/noopmod.accesswidener")
+    accessWidenerPath = rootProject.file("src/main/resources/visotaris.accesswidener")
     runs {
         client {
             client()
@@ -56,7 +56,7 @@ loom {
 }
 
 base {
-    archivesName = 'noopmod'
+    archivesName = 'visotaris'
 }
 
 // ── Kotlin-Konfiguration ─────────────────────────────────────────────────────
@@ -92,8 +92,8 @@ shadowJar {
     configurations    = [project.configurations.shade]
     archiveClassifier = 'dev-shadow'
     // Paket-Relokation: verhindert Konflikte zur Laufzeit mit anderen Mods
-    relocate 'okhttp3', 'systems.diath.noopmod.shade.okhttp3'
-    relocate 'okio',    'systems.diath.noopmod.shade.okio'
+    relocate 'okhttp3', 'systems.diath.visotaris.shade.okhttp3'
+    relocate 'okio',    'systems.diath.visotaris.shade.okio'
 }
 
 remapJar {
