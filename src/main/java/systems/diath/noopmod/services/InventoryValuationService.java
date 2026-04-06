@@ -1,6 +1,10 @@
 package systems.diath.noopmod.services;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import systems.diath.noopmod.cache.MarketCache;
@@ -16,10 +20,8 @@ import java.util.Optional;
 /**
  * Berechnet den Gesamtwert eines Inventars oder Containers.
  *
- * Shulker-Inhalte werden rekursiv mitgerechnet (TODO: Komponenten-API verwenden).
+ * Shulker-Inhalte werden rekursiv mitgerechnet (via {@code DataComponentTypes.CONTAINER}).
  * Der Aufruf darf vom Render-Thread erfolgen (kein Netzwerk, kein Blocking).
- *
- * TODO: Shulker-Inhalte via ItemStack-Komponenten auslesen (1.21.4 nutzt DataComponentTypes).
  */
 public final class InventoryValuationService {
 
@@ -61,8 +63,19 @@ public final class InventoryValuationService {
         for (ItemStack stack : stacks) {
             if (stack.isEmpty()) continue;
 
-            // TODO: Shulker-Erkennung via DataComponentTypes implementieren
-            // if (isShulker(stack)) { hasShulkers = true; evaluate(shulkerContents(stack)); }
+            // Shulker-Rekursion: Inhalt des Shulker-Box-Items bewerten
+            if (config.getConfig().shulkerRecursion
+                    && stack.getItem() instanceof BlockItem bi
+                    && bi.getBlock() instanceof ShulkerBoxBlock) {
+                ContainerComponent contents = stack.get(DataComponentTypes.CONTAINER);
+                if (contents != null) {
+                    hasShulkers = true;
+                    InventoryValuation inner = evaluate(contents.iterateNonEmpty());
+                    buy  += inner.getBuyTotal();
+                    sell += inner.getSellTotal();
+                    continue;
+                }
+            }
 
             String key = itemKey(stack);
             Optional<MarketPrice> price = marketCache.get(key);

@@ -59,6 +59,8 @@ public final class NoOpConfigScreen extends Screen {
                v -> cfg.showContainerOverlay = v);     y += BTN_H + BTN_GAP;
         toggle(lx, y, "Schnellzugriff-Buttons",  cfg.showQuickButtons,
                v -> cfg.showQuickButtons = v);         y += BTN_H + BTN_GAP;
+        toggle(lx, y, "Shulker-Rekursion",       cfg.shulkerRecursion,
+               v -> cfg.shulkerRecursion = v);         y += BTN_H + BTN_GAP;
 
         // Rechte Spalte: Schutz & Tracker
         int rx = cx + COL_GAP / 2;

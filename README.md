@@ -25,15 +25,15 @@ die speziell auf die Spielmechaniken von OPSUCHT ausgelegt sind.
 | **/rename- & /sign-Schutz** | Fängt diese Befehle vor dem Absenden ab und fordert eine Bestätigung |
 | **Command-Kurzformen** | `1k` → `1000`, `2.5m` → `2500000` in Geld-Befehlen (`/pay`, `bank`, …) |
 | **Config + ModMenu** | Alle Funktionen einzeln ein-/ausschaltbar über eine Einstellungsseite |
+| **Inventar-Buttons** | Schnellzugriff-Buttons für `/jobs`, `/shard`, `/spawn` direkt im Spielerinventar |
+| **Shulker-Rekursion** | Shulker-Box-Inhalte im Container-Overlay mitbewerten (via Komponenten-API) |
 | **Discord RPC (Stub)** | Aktivierbarer Discord-Präsenz-Service – standardmäßig deaktiviert, da viele Spieler bereits eine eigene RPC-Mod nutzen |
 
 ### Geplant (Roadmap)
 
-- Inventar-Buttons (Schnellzugriff auf OPSUCHT-Menüs direkt aus dem Spielerinventar)
 - Offhand-Blocker (verhindert versehentliche Offhand-Interaktionen)
 - Inventar-voll-Warnung (visueller Hinweis wenn das Inventar keine freien Slots mehr hat)
 - Anvil-Normalisierung (erkennt OPSUCHT-Preiseingabe-Dialoge und wendet Kurzformen an)
-- Shulker-Rekursion im Inventarwert (verschachtelte Inhalte werden mitbewertet)
 - Session-Lifecycle (Job-Tracker-Reset bei Server-Join und -Disconnect)
 - Keybinds
 

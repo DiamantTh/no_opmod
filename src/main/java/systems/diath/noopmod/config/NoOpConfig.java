@@ -33,6 +33,7 @@ public final class NoOpConfig {
     // ── UI-Overlays ───────────────────────────────────────────────────────────
     public boolean showContainerOverlay = true;
     public boolean showQuickButtons     = true;
+    public boolean shulkerRecursion     = true;
 
     // ── Discord Rich Presence ─────────────────────────────────────────────────
     // Standard: deaktiviert (andere RPC-Mods haben Vorrang)
