@@ -30,7 +30,7 @@ subprojects {
         // Gemeinsamer Quellcode (root src/) in das Subprojekt einhängen
         sourceSets {
             main {
-                java      { srcDir rootProject.file('src/main/java') }
+                java   { srcDir rootProject.file('src/main/java') }
                 resources { srcDir rootProject.file('src/main/resources') }
             }
         }

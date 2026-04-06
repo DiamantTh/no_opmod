@@ -22,6 +22,10 @@ public final class NoOpConfig {
     public boolean enableOffhandBlocker     = true;
     public boolean enableInventoryWarning   = true;
 
+    // ── Commands ──────────────────────────────────────────────────────────────
+    // Kurzformen: 1k → 1000, 1.5m → 1500000 usw. in /pay, bank einzahlen, …
+    public boolean enableCommandShortforms  = true;
+
     // ── Netzwerk ──────────────────────────────────────────────────────────────
     public int marketRefreshIntervalSeconds   = 60;
     public int merchantRefreshIntervalSeconds = 60;

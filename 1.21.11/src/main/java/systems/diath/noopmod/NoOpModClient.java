@@ -20,6 +20,7 @@ import systems.diath.noopmod.services.InventoryValuationService;
 import systems.diath.noopmod.services.JobTrackerService;
 import systems.diath.noopmod.services.MarketSyncService;
 import systems.diath.noopmod.services.MerchantSyncService;
+import systems.diath.noopmod.services.CommandRewriteService;
 import systems.diath.noopmod.services.DiscordPresenceService;
 import systems.diath.noopmod.services.PendingConfirmationService;
 import systems.diath.noopmod.services.TooltipValueService;
@@ -46,6 +47,7 @@ public class NoOpModClient implements ClientModInitializer {
     private InventoryValuationService  inventoryValuationService;
     private PendingConfirmationService pendingConfirmationService;
     private DiscordPresenceService      discordPresenceService;
+    private CommandRewriteService       commandRewriteService;
 
     // UI
     private HudOverlay hudOverlay;
@@ -74,7 +76,12 @@ public class NoOpModClient implements ClientModInitializer {
             jobTrackerService.processMessage(message.getString())
         );
 
-        // 4b. /rename und /sign vor dem Absenden abfangen (1.21.11: neue ClickEvent-API)
+        // 4a. Command-Kurzformen expandieren (läuft VOR ALLOW_COMMAND)
+        ClientSendMessageEvents.MODIFY_COMMAND.register(cmd ->
+            commandRewriteService.rewrite(cmd)
+        );
+
+        // 4b. /rename und /sign abfangen
         ClientSendMessageEvents.ALLOW_COMMAND.register(command -> {
             PendingConfirmationService.Intercepted iv = pendingConfirmationService.tryIntercept(command);
             if (iv == null) return true;

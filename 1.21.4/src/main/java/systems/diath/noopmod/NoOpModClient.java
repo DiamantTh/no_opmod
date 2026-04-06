@@ -18,6 +18,7 @@ import systems.diath.noopmod.services.InventoryValuationService;
 import systems.diath.noopmod.services.JobTrackerService;
 import systems.diath.noopmod.services.MarketSyncService;
 import systems.diath.noopmod.services.MerchantSyncService;
+import systems.diath.noopmod.services.CommandRewriteService;
 import systems.diath.noopmod.services.DiscordPresenceService;
 import systems.diath.noopmod.services.PendingConfirmationService;
 import systems.diath.noopmod.services.TooltipValueService;
@@ -44,6 +45,7 @@ public class NoOpModClient implements ClientModInitializer {
     private InventoryValuationService  inventoryValuationService;
     private PendingConfirmationService pendingConfirmationService;
     private DiscordPresenceService      discordPresenceService;
+    private CommandRewriteService       commandRewriteService;
 
     // UI
     private HudOverlay hudOverlay;
@@ -64,6 +66,7 @@ public class NoOpModClient implements ClientModInitializer {
         jobTrackerService          = new JobTrackerService(configManager);
         pendingConfirmationService = new PendingConfirmationService(configManager);
         discordPresenceService     = new DiscordPresenceService(configManager);
+        commandRewriteService      = new CommandRewriteService(configManager);
 
         // 3. Hintergrundfetcher starten
         marketSyncService.start();

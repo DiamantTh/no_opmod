@@ -2,7 +2,8 @@
 // No OP.Mod – Minecraft 1.21.11
 // ─────────────────────────────────────────────────────────────────────────────
 plugins {
-    id 'fabric-loom' version '1.14.6'
+    id 'fabric-loom'                        version '1.14.6'
+    id 'org.jetbrains.kotlin.jvm'           version "${kotlin_version}"
 }
 
 // version & group kommen aus dem Root-build.gradle (subprojects-Block)
@@ -23,6 +24,9 @@ dependencies {
 
     // Mod Menu
     modImplementation "com.terraformersmc:modmenu:14.0.0"
+
+    // Kotlin Runtime (fabric-language-kotlin stellt Stdlib + Coroutinen bereit)
+    modImplementation "net.fabricmc:fabric-language-kotlin:${fabric_language_kotlin_version}"
 }
 
 loom {
@@ -39,4 +43,22 @@ loom {
 
 base {
     archivesName = 'noopmod'
+}
+
+// ── Kotlin-Konfiguration ─────────────────────────────────────────────────────
+kotlin {
+    jvmToolchain(21)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-Xjvm-default=all")
+    }
+}
+
+// Gemeinsamen Kotlin-Quellpfad einhängen
+sourceSets {
+    main {
+        kotlin { srcDir rootProject.file('src/main/kotlin') }
+    }
 }
