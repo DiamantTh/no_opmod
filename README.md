@@ -27,15 +27,15 @@ die speziell auf die Spielmechaniken von OPSUCHT ausgelegt sind.
 | **Config + ModMenu** | Alle Funktionen einzeln ein-/ausschaltbar über eine Einstellungsseite |
 | **Inventar-Buttons** | Schnellzugriff-Buttons für `/jobs`, `/shard`, `/spawn` direkt im Spielerinventar |
 | **Shulker-Rekursion** | Shulker-Box-Inhalte im Container-Overlay mitbewerten (via Komponenten-API) |
+| **Inventar-voll-Warnung** | Pulsierender roter HUD-Hinweis wenn kein freier Inventar-Slot mehr vorhanden |
+| **Keybinds** | Konfigurierbare Tastenbelegungen (Einstellungen, HUD-Toggle, Markt-Refresh) |
 | **Discord RPC (Stub)** | Aktivierbarer Discord-Präsenz-Service – standardmäßig deaktiviert, da viele Spieler bereits eine eigene RPC-Mod nutzen |
 
 ### Geplant (Roadmap)
 
 - Offhand-Blocker (verhindert versehentliche Offhand-Interaktionen)
-- Inventar-voll-Warnung (visueller Hinweis wenn das Inventar keine freien Slots mehr hat)
 - Anvil-Normalisierung (erkennt OPSUCHT-Preiseingabe-Dialoge und wendet Kurzformen an)
 - Session-Lifecycle (Job-Tracker-Reset bei Server-Join und -Disconnect)
-- Keybinds
 
 ---
 

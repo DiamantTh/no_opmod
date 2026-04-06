@@ -20,6 +20,7 @@ import systems.diath.noopmod.services.MarketSyncService;
 import systems.diath.noopmod.services.MerchantSyncService;
 import systems.diath.noopmod.services.CommandRewriteService;
 import systems.diath.noopmod.services.DiscordPresenceService;
+import systems.diath.noopmod.services.KeybindService;
 import systems.diath.noopmod.services.PendingConfirmationService;
 import systems.diath.noopmod.services.TooltipValueService;
 import systems.diath.noopmod.ui.HudOverlay;
@@ -46,6 +47,7 @@ public class NoOpModClient implements ClientModInitializer {
     private PendingConfirmationService pendingConfirmationService;
     private DiscordPresenceService      discordPresenceService;
     private CommandRewriteService       commandRewriteService;
+    private KeybindService              keybindService;
 
     // UI
     private HudOverlay hudOverlay;
@@ -67,6 +69,7 @@ public class NoOpModClient implements ClientModInitializer {
         pendingConfirmationService = new PendingConfirmationService(configManager);
         discordPresenceService     = new DiscordPresenceService(configManager);
         commandRewriteService      = new CommandRewriteService(configManager);
+        keybindService             = new KeybindService(configManager, marketSyncService, merchantSyncService);
 
         // 3. Hintergrundfetcher starten
         marketSyncService.start();
@@ -111,6 +114,9 @@ public class NoOpModClient implements ClientModInitializer {
 
         // 8. Discord Presence (nur Events registrieren; connect passiert erst bei JOIN)
         discordPresenceService.registerEvents();
+
+        // 9. Keybinds registrieren
+        keybindService.registerTick();
 
         NoOpLogger.info("{} v{} initialisiert (MC 1.21.4).", MOD_NAME,
             NoOpModClient.class.getPackage().getImplementationVersion());

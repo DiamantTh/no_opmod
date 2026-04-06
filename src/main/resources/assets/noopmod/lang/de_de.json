@@ -29,5 +29,9 @@
   "noopmod.config.enable_offhand_blocker": "Offhand-Blocker",
   "noopmod.config.enable_inventory_warning": "Inventar-voll-Warnung",
   "noopmod.config.market_refresh_interval": "Markt-Refresh-Intervall (s)",
-  "noopmod.config.merchant_refresh_interval": "Merchant-Refresh-Intervall (s)"
+  "noopmod.config.merchant_refresh_interval": "Merchant-Refresh-Intervall (s)",
+  "key.categories.noopmod": "No OP.Mod",
+  "noopmod.key.open_settings": "Einstellungen öffnen",
+  "noopmod.key.toggle_hud": "HUD ein-/ausblenden",
+  "noopmod.key.refresh_market": "Markt-Daten aktualisieren"
 }

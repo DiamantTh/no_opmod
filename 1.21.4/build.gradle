@@ -58,6 +58,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 // Gemeinsamen Kotlin-Quellpfad einhängen (zusätzlich zum Root-Java-Pfad)
 sourceSets {
     main {
-        kotlin { srcDir rootProject.file('src/main/kotlin') }
+        kotlin {
+            srcDir rootProject.file('src/main/kotlin')
+            srcDir project.file('src/main/kotlin')
+        }
     }
 }
