@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import systems.diath.noopmod.NoOpConst;
 import systems.diath.noopmod.NoOpLogger;
 import systems.diath.noopmod.config.ConfigManager;
@@ -12,12 +16,7 @@ import systems.diath.noopmod.model.ShardRate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,62 +49,56 @@ import java.util.regex.Pattern;
 public final class MerchantApiClient {
 
     private static final String  ENDPOINT    = "https://api.opsucht.net/merchant/rates";
-    private static final int     TIMEOUT_MS  = 10_000;
     private static final Gson    GSON        = new Gson();
     /** Extrahiert den Wert von custom_model_data=NNN aus einem komplexen MC-Komponentenstring. */
     private static final Pattern CMD_PATTERN = Pattern.compile("custom_model_data=(\\d+)");
 
     private final ConfigManager configManager;
+    private final OkHttpClient  httpClient;
 
     public MerchantApiClient(ConfigManager configManager) {
         this.configManager = configManager;
+        this.httpClient    = NoOpConst.buildOkHttpClient(configManager.getConfig());
     }
 
     public List<ShardRate> fetchRates() throws IOException {
-        HttpClient client   = NoOpConst.buildHttpClient(configManager.getConfig());
-        HttpRequest request = buildRequest(ENDPOINT);
+        Request request = new Request.Builder().url(ENDPOINT).build();
 
-        HttpResponse<InputStream> response;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException("Merchant-API Request unterbrochen", e);
-        }
+        try (Response response = httpClient.newCall(request).execute()) {
+            int status = response.code();
+            if (status != 200) throw new IOException("Merchant-API Status " + status);
 
-        int status = response.statusCode();
-        if (status != 200) {
-            response.body().close();
-            throw new IOException("Merchant-API Status " + status);
-        }
+            ResponseBody body = response.body();
+            if (body == null) throw new IOException("Merchant-API: leerer Response-Body");
 
-        try (InputStream is = response.body();
-             InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            try (InputStream is = body.byteStream();
+                 InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
 
-            JsonElement root = GSON.fromJson(reader, JsonElement.class);
+                JsonElement root = GSON.fromJson(reader, JsonElement.class);
 
-            if (!root.isJsonArray()) {
-                NoOpLogger.warn("Merchant-API: unerwartetes Root-Element (kein Array).");
-                return Collections.emptyList();
+                if (!root.isJsonArray()) {
+                    NoOpLogger.warn("Merchant-API: unerwartetes Root-Element (kein Array).");
+                    return Collections.emptyList();
+                }
+
+                JsonArray array = root.getAsJsonArray();
+                List<ShardRate> result = new ArrayList<>(array.size());
+
+                for (JsonElement el : array) {
+                    if (!el.isJsonObject()) continue;
+                    JsonObject obj = el.getAsJsonObject();
+
+                    String rawSource = getStringOrNull(obj, "source");
+                    if (rawSource == null || rawSource.isBlank()) continue;
+
+                    double rate = getDouble(obj, "exchangeRate");
+                    String key  = normalizeSource(rawSource);
+                    result.add(new ShardRate(key, rate));
+                }
+
+                NoOpLogger.debug("Merchant-API: {} Shardkurs-Einträge geladen.", result.size());
+                return result;
             }
-
-            JsonArray array = root.getAsJsonArray();
-            List<ShardRate> result = new ArrayList<>(array.size());
-
-            for (JsonElement el : array) {
-                if (!el.isJsonObject()) continue;
-                JsonObject obj = el.getAsJsonObject();
-
-                String rawSource = getStringOrNull(obj, "source");
-                if (rawSource == null || rawSource.isBlank()) continue;
-
-                double rate = getDouble(obj, "exchangeRate");
-                String key  = normalizeSource(rawSource);
-                result.add(new ShardRate(key, rate));
-            }
-
-            NoOpLogger.debug("Merchant-API: {} Shardkurs-Einträge geladen.", result.size());
-            return result;
         }
     }
 
@@ -135,20 +128,6 @@ public final class MerchantApiClient {
         // Einfacher Source-String
         if (s.contains(":")) s = s.substring(s.lastIndexOf(':') + 1);
         return s.toLowerCase().replace(" ", "_");
-    }
-
-    private HttpRequest buildRequest(String url) {
-        var cfg = configManager.getConfig();
-        HttpRequest.Builder req = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .timeout(Duration.ofMillis(TIMEOUT_MS))
-            .GET()
-            .header("Accept", "application/json")
-            .header("User-Agent", NoOpConst.buildUserAgent(cfg.customUserAgent));
-        if (cfg.apiKey != null && !cfg.apiKey.isBlank()) {
-            req.header("Authorization", "Bearer " + cfg.apiKey.strip());
-        }
-        return req.build();
     }
 
     private static String getStringOrNull(JsonObject obj, String key) {

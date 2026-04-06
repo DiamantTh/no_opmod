@@ -1,12 +1,13 @@
 package systems.diath.noopmod;
 
 import net.fabricmc.loader.api.FabricLoader;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import systems.diath.noopmod.config.NoOpConfig;
 
 import java.net.InetSocketAddress;
-import java.net.ProxySelector;
-import java.net.http.HttpClient;
-import java.time.Duration;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Gemeinsame Konstanten (Mod-ID, Name) – verhindert Duplikate
@@ -41,17 +42,31 @@ public final class NoOpConst {
     }
 
     /**
-     * Erstellt einen {@link HttpClient} mit HTTP/2-Präferenz und optionalem Proxy.
+     * Erstellt einen {@link OkHttpClient} mit optionalem Proxy und Interceptor
+     * für User-Agent, Accept-Header und Bearer-Authentifizierung.
      *
-     * @param cfg Aktuelle Mod-Konfiguration (proxyHost/proxyPort werden ausgewertet)
+     * <p>Der Client wird einmalig pro Service-Instanz gebaut und wiederverwendet.
+     * OkHttp nutzt HTTP/2 automatisch (via ALPN/TLS-Aushandlung).
+     *
+     * @param cfg Aktuelle Mod-Konfiguration
      */
-    public static HttpClient buildHttpClient(NoOpConfig cfg) {
-        HttpClient.Builder builder = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_2)
-            .connectTimeout(Duration.ofSeconds(10))
-            .followRedirects(HttpClient.Redirect.NORMAL);
+    public static OkHttpClient buildOkHttpClient(NoOpConfig cfg) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .followRedirects(true)
+            .addInterceptor(chain -> {
+                Request.Builder req = chain.request().newBuilder()
+                    .header("User-Agent", buildUserAgent(cfg.customUserAgent))
+                    .header("Accept", "application/json");
+                if (cfg.apiKey != null && !cfg.apiKey.isBlank()) {
+                    req.header("Authorization", "Bearer " + cfg.apiKey.strip());
+                }
+                return chain.proceed(req.build());
+            });
         if (cfg.proxyHost != null && !cfg.proxyHost.isBlank() && cfg.proxyPort > 0) {
-            builder.proxy(ProxySelector.of(new InetSocketAddress(cfg.proxyHost.strip(), cfg.proxyPort)));
+            builder.proxy(new Proxy(Proxy.Type.HTTP,
+                new InetSocketAddress(cfg.proxyHost.strip(), cfg.proxyPort)));
         }
         return builder.build();
     }

@@ -91,6 +91,14 @@ public final class NoOpConfigScreen extends Screen {
         addCycling(cx + COL_GAP / 2, iy, "Merchant-Refresh",
             cfg.merchantRefreshIntervalSeconds, v -> cfg.merchantRefreshIntervalSeconds = v);
 
+        // Netzwerk-Einstellungen (öffnet Unter-Screen mit TextField-Eingaben)
+        int ny     = iy + BTN_H + BTN_GAP + 8;
+        int netBtnW = BTN_W * 2 + COL_GAP;
+        this.addDrawableChild(ButtonWidget.builder(
+            Text.literal("Netzwerk-Einstellungen\u2026"),
+            b -> this.client.setScreen(new NetworkSettingsScreen(this))
+        ).dimensions(cx - netBtnW / 2, ny, netBtnW, BTN_H).build());
+
         // Bottom-Buttons
         int by = this.height - 28;
         this.addDrawableChild(ButtonWidget.builder(
