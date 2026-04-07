@@ -50,6 +50,11 @@ Dadurch sind Konflikte mit anderen Mods ausgeschlossen.
 > dass Endnutzer die Bibliothek durch eine eigene Version austauschen können (LGPL §6).
 > Beim Einbetten in einen Mod-JAR ist dies durch Veröffentlichung des Quellcodes (dieses Repository)
 > und die mitgelieferte Gradle-Konfiguration erfüllt – Nutzer können den JAR damit selbst neu bauen.
+>
+> **Kompatibilitätswarnung:** Das Austauschen gegen eine eigene night-config-Version kann zu Laufzeitfehlern
+> führen, wenn die API-Kompatibilität nicht gewährleistet ist (z. B. geänderte Methoden-Signaturen,
+> entfernte Klassen oder inkompatible Verhaltensänderungen beim TOML-Parsing). Der Mod wird in einem
+> solchen Fall nicht unterstützt.
 
 ---
 
