@@ -22,7 +22,7 @@ public final class MarketSyncService {
     private final MarketApiClient   client;
     private final ScheduledExecutorService scheduler =
         Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "noopmod-market-sync");
+            Thread t = new Thread(r, "visotaris-market-sync");
             t.setDaemon(true);
             return t;
         });

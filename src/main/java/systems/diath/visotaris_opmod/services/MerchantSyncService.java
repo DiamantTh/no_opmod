@@ -21,7 +21,7 @@ public final class MerchantSyncService {
     private final MerchantApiClient client;
     private final ScheduledExecutorService scheduler =
         Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "noopmod-merchant-sync");
+            Thread t = new Thread(r, "visotaris-merchant-sync");
             t.setDaemon(true);
             return t;
         });
