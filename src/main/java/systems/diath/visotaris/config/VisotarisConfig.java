@@ -54,6 +54,6 @@ public final class VisotarisConfig {
     public String apiKey = "";
 
     // ── Netzwerk: User-Agent ──────────────────────────────────────────────────
-    // Leer = dynamisch ("Visotaris/<ver> (MC/<ver>; Fabric/<ver>; ...)")
+    // Leer = dynamisch ("Visotaris-OPMod/<ver> (MC/<ver>; Fabric/<ver>; ...)")
     public String customUserAgent = "";
 }

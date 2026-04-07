@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public final class VisotarisConst {
 
     public static final String MOD_ID   = "visotaris";
-    public static final String MOD_NAME = "Visotaris";
+    public static final String MOD_NAME = "Visotaris OPMod";
 
     /**
      * Baut den HTTP User-Agent-String.
@@ -35,7 +35,7 @@ public final class VisotarisConst {
         String fabricVer  = loader.getModContainer("fabricloader")
             .map(c -> c.getMetadata().getVersion().getFriendlyString()).orElse("?");
 
-        return "Visotaris/" + modVer
+        return "Visotaris-OPMod/" + modVer
             + " (MC/" + mcVer
             + "; Fabric/" + fabricVer
             + "; git.diath.systems/DiamantTh/visotaris-opmod)";

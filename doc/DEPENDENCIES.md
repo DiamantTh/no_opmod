@@ -1,4 +1,4 @@
-# Visotaris – Abhängigkeiten und Lizenzen
+# Visotaris OPMod – Abhängigkeiten und Lizenzen
 
 Dieses Dokument listet alle direkten Abhängigkeiten des Projekts mit ihren jeweiligen Lizenzen auf.
 Zuletzt aktualisiert: 2026-04-07

@@ -116,7 +116,7 @@ public final class ConfigManager {
                 " ── Netzwerk: API-Key (non-leer → Header \"Authorization: Bearer <key>\") ──────");
             toml.set("apiKey",                         c.apiKey);
             toml.setComment("customUserAgent",
-                " ── Netzwerk: User-Agent (leer = auto \"Visotaris/<ver> (MC/<ver>)\") ────");
+                " ── Netzwerk: User-Agent (leer = auto \"Visotaris-OPMod/<ver> (MC/<ver>)\") ────");
             toml.set("customUserAgent",                c.customUserAgent);
             toml.save();
         } catch (Exception e) {
