@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class VisotarisConst {
 
-    public static final String MOD_ID   = "visotaris";
+    public static final String MOD_ID   = "visotaris_opmod";
     public static final String MOD_NAME = "Visotaris OPMod";
 
     /**

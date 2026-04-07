@@ -59,7 +59,7 @@ loom {
 }
 
 base {
-    archivesName = 'visotaris'
+    archivesName = 'visotaris_opmod'
 }
 
 // ── Kotlin-Konfiguration ─────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "visotaris",
+  "id": "visotaris_opmod",
   "version": "${version}",
   "name": "Visotaris OPMod",
   "description": "OPSUCHT-Client-Komfort-Mod: Marktpreise, Jobtracker, HUD, Amboss-Normalisierung, OffhandBlocker u.v.m.",
