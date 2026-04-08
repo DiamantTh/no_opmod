@@ -11,6 +11,10 @@ out/
 *.iml
 .vscode/
 *.class
+**/bin/
+**/.classpath
+**/.project
+**/.settings/
 
 # Fabric Loom Run-Verzeichnis
 run/
