@@ -42,6 +42,32 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
 
 
     // ════════════════════════════════════════════════════════════════════════
+    //  INIT – Daten-Fetch beim Öffnen triggern
+    // ════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Wenn ein Container-Screen geöffnet wird und Overlay oder Tooltips aktiv sind,
+     * sofort einen frischen Daten-Fetch anstoßen (nicht nur Anzeigen – auch Abrufen).
+     */
+    @Inject(method = "init", at = @At("TAIL"))
+    private void onInit(CallbackInfo ci) {
+        VisotarisModClient mod = VisotarisModClient.getInstance();
+        if (mod == null) return;
+
+        T handler = getScreenHandler();
+        boolean isContainer = handler instanceof GenericContainerScreenHandler
+                           || handler instanceof ShulkerBoxScreenHandler
+                           || handler instanceof PlayerScreenHandler;
+        if (!isContainer) return;
+
+        var cfg = mod.getConfigManager().getConfig();
+        if (cfg.showContainerOverlay || cfg.showMarketTooltips) {
+            mod.getMarketSyncService().refresh();
+            mod.getMerchantSyncService().refresh();
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
     //  RENDER
     // ════════════════════════════════════════════════════════════════════════
 

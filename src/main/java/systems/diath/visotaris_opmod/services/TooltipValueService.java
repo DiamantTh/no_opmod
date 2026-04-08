@@ -10,6 +10,7 @@ import systems.diath.visotaris_opmod.cache.ShardCache;
 import systems.diath.visotaris_opmod.config.ConfigManager;
 import systems.diath.visotaris_opmod.model.MarketPrice;
 import systems.diath.visotaris_opmod.model.ShardRate;
+import systems.diath.visotaris_opmod.util.ItemNameResolver;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +48,8 @@ public final class TooltipValueService {
         // Marktpreis
         Optional<MarketPrice> price = marketCache.get(baseKey);
         price.ifPresent(p -> {
-            lines.add(Text.literal("§8[Visotaris]"));
+            String localName = ItemNameResolver.resolve(baseKey);
+            lines.add(Text.literal("§8[Visotaris] §7" + localName));
             if (p.getBuy()  > 0) lines.add(Text.literal("§eKaufpreis:      §f" + formatMoney(p.getBuy())));
             if (p.getSell() > 0) lines.add(Text.literal("§eVerkaufspreis:  §f" + formatMoney(p.getSell())));
         });
