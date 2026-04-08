@@ -16,7 +16,7 @@ import systems.diath.visotaris_opmod.cache.ShardCache
 /**
  * Eingebetteter HTTP-Server für das Visotaris Web-UI.
  *
- * Läuft auf localhost:[port] (Standard: 7865).
+ * Läuft auf localhost:[port] (Standard: 7780).
  * Alle Anfragen bleiben lokal – es werden keine Daten an externe Dienste gesendet.
  *
  * Routen:
@@ -41,23 +41,21 @@ class WebServer(
     fun start() {
         if (servers.isNotEmpty()) return
 
-        // IPv4 (127.0.0.1) – erforderlich
-        try {
-            servers += buildServer("127.0.0.1").start(wait = false)
-        } catch (e: Exception) {
-            VisotarisLogger.error("Web-UI konnte nicht auf 127.0.0.1:{} starten: {}", port, e.message)
+        // Beide Stacks starten – IPv6 zuerst (moderner Standard), IPv4 für "localhost"-Kompatibilität
+        for (host in listOf("::1", "127.0.0.1")) {
+            try {
+                servers += buildServer(host).start(wait = false)
+            } catch (e: Exception) {
+                VisotarisLogger.warn("Web-UI konnte nicht auf {}:{} starten: {}", host, port, e.message)
+            }
+        }
+
+        if (servers.isEmpty()) {
+            VisotarisLogger.error("Web-UI konnte auf keiner Adresse starten.")
             return
         }
 
-        // IPv6 (::1) – optional; auf Systemen ohne IPv6 überspringen
-        try {
-            servers += buildServer("::1").start(wait = false)
-        } catch (e: Exception) {
-            VisotarisLogger.warn("Web-UI IPv6 (::1:{}) nicht verfügbar: {}", port, e.message)
-        }
-
-        val v6 = if (servers.size > 1) " | http://[::1]:$port/" else ""
-        VisotarisLogger.info("Web-UI gestartet: http://127.0.0.1:{}/{}",  port, v6)
+        VisotarisLogger.info("Web-UI gestartet: http://[::1]:{}/ | http://127.0.0.1:{}/", port, port)
     }
 
     fun stop() {

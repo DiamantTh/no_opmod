@@ -46,7 +46,7 @@ public final class VisotarisConfig {
     // ── Web-UI ─────────────────────────────────────────────────────────────────
     // Lokaler HTTP-Server (localhost:webUiPort) für Marktpreis-Ansicht im Browser
     public boolean enableWebUi = false;
-    public int     webUiPort   = 7865;
+    public int     webUiPort   = 7780;
     // ── Netzwerk: Proxy ───────────────────────────────────────────────────────
     // Leer/0 = Direktverbindung; z.B. proxyHost="127.0.0.1", proxyPort=8080
     public String proxyHost = "";
