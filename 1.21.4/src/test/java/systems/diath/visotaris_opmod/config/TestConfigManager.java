@@ -1,4 +1,4 @@
-package systems.diath.visotaris.config;
+package systems.diath.visotaris_opmod.config;
 
 /**
  * Test-Hilfsmethode: erzeugt einen ConfigManager ohne FabricLoader-Aufruf.

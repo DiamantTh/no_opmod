@@ -1,10 +1,10 @@
-package systems.diath.visotaris.services;
+package systems.diath.visotaris_opmod.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import systems.diath.visotaris.config.TestConfigManager;
-import systems.diath.visotaris.config.VisotarisConfig;
-import systems.diath.visotaris.model.JobSnapshot;
+import systems.diath.visotaris_opmod.config.TestConfigManager;
+import systems.diath.visotaris_opmod.config.VisotarisConfig;
+import systems.diath.visotaris_opmod.model.JobSnapshot;
 
 import static org.junit.jupiter.api.Assertions.*;
 

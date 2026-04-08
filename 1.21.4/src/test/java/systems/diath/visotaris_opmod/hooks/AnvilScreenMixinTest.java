@@ -1,4 +1,4 @@
-package systems.diath.visotaris.hooks;
+package systems.diath.visotaris_opmod.hooks;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
