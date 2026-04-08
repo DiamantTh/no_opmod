@@ -3,12 +3,15 @@
 
 // ── Bequeme Build-Tasks vom Root aus ─────────────────────────────────────────
 //
-//   ./gradlew buildAll       → beide Versionen bauen + JARs nach ./out/ kopieren
-//   ./gradlew build1214      → nur 1.21.4 bauen    + JAR nach ./out/ kopieren
-//   ./gradlew build12111     → nur 1.21.11 bauen   + JAR nach ./out/ kopieren
-//   ./gradlew runClient      → bevorzugten Dev-Client starten (aktuell 1.21.11)
-//   ./gradlew runClient1214  → Dev-Client für 1.21.4 starten
-//   ./gradlew runClient12111 → Dev-Client für 1.21.11 starten
+//   ./gradlew buildAll            → beide Versionen bauen + JARs nach ./out/ kopieren
+//   ./gradlew build-1.21.4        → nur 1.21.4 bauen     + JAR nach ./out/ kopieren
+//   ./gradlew build-1.21.11       → nur 1.21.11 bauen    + JAR nach ./out/ kopieren
+//   ./gradlew runClient           → bevorzugten Dev-Client starten (aktuell 1.21.11)
+//   ./gradlew runClient-1.21.4    → Dev-Client für 1.21.4 starten
+//   ./gradlew runClient-1.21.11   → Dev-Client für 1.21.11 starten
+//
+// Hinweis: Doppelpunkte im Tasknamen (`runClient:1.21.11`) erlaubt Gradle nicht.
+// Der Gradle-native Doppelpunktweg ist stattdessen: `./gradlew :1.21.11:runClient`
 //
 // Die finalen Mod-JARs landen immer unter:
 //   out/visotaris-<version>+mc1.21.4.jar
@@ -24,7 +27,7 @@ if (requestedTasks.contains('runClient')) {
     gradle.startParameter.excludedTaskNames += [':1.21.4:runClient']
 }
 
-task build1214 {
+def build1214Task = tasks.register('build-1.21.4') {
     group       = 'visotaris'
     description = 'Baut nur MC 1.21.4 und kopiert den JAR nach ./out/'
     dependsOn   ':1.21.4:remapJar'
@@ -36,7 +39,7 @@ task build1214 {
     }
 }
 
-task build12111 {
+def build12111Task = tasks.register('build-1.21.11') {
     group       = 'visotaris'
     description = 'Baut nur MC 1.21.11 und kopiert den JAR nach ./out/'
     dependsOn   ':1.21.11:remapJar'
@@ -48,29 +51,35 @@ task build12111 {
     }
 }
 
-task buildAll {
+tasks.register('buildAll') {
     group       = 'visotaris'
     description = 'Baut alle MC-Versionen und kopiert die JARs nach ./out/'
-    dependsOn build1214, build12111
+    dependsOn   build1214Task, build12111Task
 }
 
-task runClient1214 {
+def runClient1214Task = tasks.register('runClient-1.21.4') {
     group       = 'visotaris'
     description = 'Startet den Dev-Client für MC 1.21.4 (inkl. Mod Menu).'
     dependsOn   ':1.21.4:runClient'
 }
 
-task runClient12111 {
+def runClient12111Task = tasks.register('runClient-1.21.11') {
     group       = 'visotaris'
     description = 'Startet den Dev-Client für MC 1.21.11 (inkl. Mod Menu).'
     dependsOn   ':1.21.11:runClient'
 }
 
-task runClient {
+tasks.register('runClient') {
     group       = 'visotaris'
     description = 'Startet den bevorzugten Dev-Client (aktuell MC 1.21.11, inkl. Mod Menu, ohne Parallelstart beider Versionen).'
-    dependsOn   runClient12111
+    dependsOn   runClient12111Task
 }
+
+// Stille Kompatibilitätsaliases für alte Namen
+tasks.register('build1214')     { group = null; dependsOn build1214Task }
+tasks.register('build12111')    { group = null; dependsOn build12111Task }
+tasks.register('runClient1214') { group = null; dependsOn runClient1214Task }
+tasks.register('runClient12111'){ group = null; dependsOn runClient12111Task }
 
 // Jedes Subprojekt hängt seinen remapJar-Output automatisch nach ./out/
 subprojects {
