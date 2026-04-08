@@ -3,9 +3,12 @@
 
 // ── Bequeme Build-Tasks vom Root aus ─────────────────────────────────────────
 //
-//   ./gradlew buildAll      → beide Versionen bauen + JARs nach ./out/ kopieren
-//   ./gradlew build1214     → nur 1.21.4 bauen    + JAR nach ./out/ kopieren
-//   ./gradlew build12111    → nur 1.21.11 bauen   + JAR nach ./out/ kopieren
+//   ./gradlew buildAll       → beide Versionen bauen + JARs nach ./out/ kopieren
+//   ./gradlew build1214      → nur 1.21.4 bauen    + JAR nach ./out/ kopieren
+//   ./gradlew build12111     → nur 1.21.11 bauen   + JAR nach ./out/ kopieren
+//   ./gradlew runClient      → bevorzugten Dev-Client starten (aktuell 1.21.11)
+//   ./gradlew runClient1214  → Dev-Client für 1.21.4 starten
+//   ./gradlew runClient12111 → Dev-Client für 1.21.11 starten
 //
 // Die finalen Mod-JARs landen immer unter:
 //   out/visotaris-<version>+mc1.21.4.jar
@@ -13,6 +16,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 def outDir = rootProject.file('out')
+def requestedTasks = gradle.startParameter.taskNames
+
+// `./gradlew runClient` soll bewusst nur den bevorzugten Dev-Client starten
+// statt beide Minecraft-Versionen parallel hochzufahren.
+if (requestedTasks.contains('runClient')) {
+    gradle.startParameter.excludedTaskNames += [':1.21.4:runClient']
+}
 
 task build1214 {
     group       = 'visotaris'
@@ -42,6 +52,24 @@ task buildAll {
     group       = 'visotaris'
     description = 'Baut alle MC-Versionen und kopiert die JARs nach ./out/'
     dependsOn build1214, build12111
+}
+
+task runClient1214 {
+    group       = 'visotaris'
+    description = 'Startet den Dev-Client für MC 1.21.4 (inkl. Mod Menu).'
+    dependsOn   ':1.21.4:runClient'
+}
+
+task runClient12111 {
+    group       = 'visotaris'
+    description = 'Startet den Dev-Client für MC 1.21.11 (inkl. Mod Menu).'
+    dependsOn   ':1.21.11:runClient'
+}
+
+task runClient {
+    group       = 'visotaris'
+    description = 'Startet den bevorzugten Dev-Client (aktuell MC 1.21.11, inkl. Mod Menu, ohne Parallelstart beider Versionen).'
+    dependsOn   runClient12111
 }
 
 // Jedes Subprojekt hängt seinen remapJar-Output automatisch nach ./out/
