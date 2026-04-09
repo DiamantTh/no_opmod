@@ -32,7 +32,7 @@
   "visotaris_opmod.config.enable_anvil_normalization": "Anvil normalization",
   "visotaris_opmod.config.market_refresh_interval": "Market refresh interval (s)",
   "visotaris_opmod.config.merchant_refresh_interval": "Merchant refresh interval (s)",
-  "key.categories.visotaris_opmod": "Visotaris",
+  "key.categories.visotaris_opmod": "Visotaris OPMod",
   "visotaris_opmod.key.open_settings": "Open settings",
   "visotaris_opmod.key.toggle_hud": "Toggle HUD",
   "visotaris_opmod.key.refresh_market": "Refresh market data"
