@@ -1,3 +1,17 @@
+import com.github.gradle.node.npm.task.NpmTask
+
+plugins {
+    // Gradle Node Plugin: lädt Node.js + npm automatisch herunter,
+    // kein lokales npm/node auf dem Build-System erforderlich.
+    id 'com.github.node-gradle.node'
+}
+
+node {
+    download         = true                          // Node.js + npm automatisch herunterladen
+    version          = property('node_version')      // Version aus gradle.properties
+    nodeProjectDir   = rootProject.file('webui')     // webui/ ist das npm-Projekt
+}
+
 // Root build.gradle – gemeinsame Konfiguration für alle Subprojekte.
 // Der eigentliche Gradle-Build läuft jeweils in 1.21.4/ oder 1.21.11/.
 
@@ -78,11 +92,12 @@ tasks.register('runClient') {
 // ── Svelte Web-UI Build ───────────────────────────────────────────────────────
 // Kompiliert das webui/-Svelte-Projekt und schreibt das Ergebnis nach
 // src/main/resources/assets/webui/ (wird von allen Subprojekten als Ressource eingebunden).
-tasks.register('npmBuildWebui', Exec) {
+tasks.register('npmBuildWebui', NpmTask) {
     group       = 'visotaris'
     description = 'Baut das Svelte Web-UI (webui/ → src/main/resources/assets/webui/)'
-    workingDir  = rootProject.file('webui')
-    commandLine = ['npm', 'run', 'build']
+    // args = npm-Argumente; workingDir kommt aus node.nodeProjectDir (webui/)
+    args        = ['run', 'build']
+    dependsOn   tasks.named('npmInstall')  // stellt sicher dass node_modules aktuell sind
 
     // Inkrementell: nur neu bauen wenn Quelldateien sich geändert haben
     inputs.dir  rootProject.file('webui/src')

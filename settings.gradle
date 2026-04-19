@@ -6,6 +6,10 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
+    plugins {
+        // Lädt Node.js + npm automatisch herunter – kein lokales npm nötig
+        id 'com.github.node-gradle.node' version "${node_plugin_version}"
+    }
 }
 
 rootProject.name = 'visotaris_opmod'
