@@ -2,6 +2,7 @@
   import { flip }     from 'svelte/animate'
   import { fade }     from 'svelte/transition'
   import { cubicOut } from 'svelte/easing'
+  import Icon from '@iconify/svelte'
   import Navbar       from '../../components/Navbar.svelte'
   import { fmtItem, fmt, spreadClass } from '../../lib/utils.js'
 
@@ -20,9 +21,9 @@
 
   // ── Derived ────────────────────────────────────────────────────────────────
   const statusBadgeClass = $derived(
-    loading          ? 'bg-secondary' :
-    error            ? 'badge-stale'  :
-    items.length === 0 ? 'badge-empty' : 'badge-fresh'
+    loading            ? 'badge-secondary' :
+    error              ? 'badge-stale'     :
+    items.length === 0 ? 'badge-empty'     : 'badge-fresh'
   )
 
   const statusText = $derived(
@@ -98,22 +99,24 @@
 
 <Navbar activePage="market" />
 
-<div class="container-fluid py-3">
+<div class="w-full px-4 py-3">
 
   <!-- ── Kopfzeile ────────────────────────────────────────────────────────── -->
-  <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
-    <h5 class="mb-0"><i class="bi bi-table me-2 text-info"></i>Marktpreise</h5>
-    <span class="badge rounded-pill {statusBadgeClass}">{statusText}</span>
-    <div class="ms-auto d-flex gap-2">
+  <div class="flex items-center gap-3 mb-3 flex-wrap">
+    <h5 class="m-0 flex items-center gap-2 font-semibold text-base">
+      <Icon icon="lucide:table" width={15} style="color:var(--vi-accent)" />Marktpreise
+    </h5>
+    <span class={statusBadgeClass}>{statusText}</span>
+    <div class="ml-auto flex gap-2">
       <input
         type="text"
-        class="form-control form-control-sm search-input"
+        class="search-input"
+        style="width:220px"
         placeholder="Suchen…"
         bind:value={search}
-        style="width:220px"
       >
-      <button class="btn btn-sm btn-outline-secondary" onclick={loadData} title="Aktualisieren">
-        <i class="bi bi-arrow-clockwise" class:spin={loading}></i>
+      <button class="btn-icon" onclick={loadData} title="Aktualisieren">
+        <Icon icon="lucide:refresh-cw" width={14} class={loading ? 'spin' : ''} />
       </button>
     </div>
   </div>
@@ -122,7 +125,8 @@
   {#if loading && items.length === 0}
     <div class="loading-overlay" transition:fade={{ duration: 150 }}>
       <div class="text-center">
-        <div class="spinner-border text-info mb-2" role="status"></div>
+        <span class="inline-block w-6 h-6 border-2 rounded-full animate-spin mb-2 mx-auto block"
+              style="border-color:var(--vi-accent); border-top-color:transparent"></span>
         <div>Lade Marktpreise…</div>
       </div>
     </div>
@@ -130,58 +134,61 @@
 
   <!-- ── Fehler ────────────────────────────────────────────────────────────── -->
   {#if error && !loading}
-    <div class="alert alert-danger" transition:fade>{error}</div>
+    <div class="rounded p-3 mb-3 text-sm"
+         style="background:#450a0a; border:1px solid #7f1d1d; color:#fca5a5"
+         transition:fade>{error}</div>
   {/if}
 
   <!-- ── Tabelle ───────────────────────────────────────────────────────────── -->
   {#if !loading || items.length > 0}
-    <div class="card" transition:fade={{ duration: 200 }}>
-      <div class="table-responsive">
-        <table class="table table-hover table-sm mb-0">
+    <div class="vi-card" transition:fade={{ duration: 200 }}>
+      <div class="overflow-x-auto">
+        <table class="vi-table">
           <thead>
             <tr>
               <th onclick={() => setSort('item')} class={sortCls('item')}>Item</th>
-              <th onclick={() => setSort('buy')}  class="text-end {sortCls('buy')}">Kaufpreis</th>
-              <th onclick={() => setSort('sell')} class="text-end {sortCls('sell')}">Verkaufspreis</th>
-              <th class="text-end">Spanne</th>
+              <th onclick={() => setSort('buy')}  class="text-right {sortCls('buy')}">Kaufpreis</th>
+              <th onclick={() => setSort('sell')} class="text-right {sortCls('sell')}">Verkaufspreis</th>
+              <th class="text-right">Spanne</th>
             </tr>
           </thead>
           <tbody>
             {#each filteredItems as item (item.itemKey)}
-              <!-- animate:flip → FLIP-Animation beim Umsortieren -->
               <tr
                 animate:flip={{ duration: 280, easing: cubicOut }}
                 class:row-flash={flashKeys.has(item.itemKey)}
               >
                 <td>
-                  <div class="d-flex align-items-center gap-2">
+                  <div class="flex items-center gap-2">
                     <img
                       src="/api/icon/{item.itemKey}"
                       class="item-icon" alt=""
                       onerror={(e) => e.currentTarget.style.display = 'none'}
                     >
-                    <a href="/history?m={item.itemKey}" class="fw-medium text-decoration-none">
+                    <a href="/history?m={item.itemKey}"
+                       class="font-medium no-underline transition-colors"
+                       style="color:var(--vi-text)">
                       {fmtItem(item.itemKey)}
                     </a>
                   </div>
                 </td>
-                <td class="text-end">
+                <td class="text-right">
                   {#if item.buy > 0}
                     <span class="price-buy">{fmt(item.buy)}</span>
                   {:else}
                     <span class="price-na">–</span>
                   {/if}
                 </td>
-                <td class="text-end">
+                <td class="text-right">
                   {#if item.sell > 0}
                     <span class="price-sell">{fmt(item.sell)}</span>
                   {:else}
                     <span class="price-na">–</span>
                   {/if}
                 </td>
-                <td class="text-end">
+                <td class="text-right">
                   {#if item.buy > 0 && item.sell > 0}
-                    <span class="{spreadClass(item.buy, item.sell)} small tabular">
+                    <span class="{spreadClass(item.buy, item.sell)} tabular">
                       {fmt(item.buy - item.sell)}
                     </span>
                   {:else}
@@ -193,7 +200,7 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer text-muted small d-flex justify-content-between">
+      <div class="vi-card-footer flex justify-between">
         <span>{filteredItems.length} / {items.length} Einträge</span>
         {#if lastFetch}<span>Stand: {lastFetch}</span>{/if}
       </div>
@@ -203,6 +210,5 @@
 </div>
 
 <style>
-  /* Tabular-Nums für Preisspalten */
   .tabular { font-variant-numeric: tabular-nums; }
 </style>
