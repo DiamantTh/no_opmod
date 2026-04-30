@@ -1,21 +1,27 @@
 <script>
+  import Icon from '@iconify/svelte'
   /** @type {{ activePage: 'market' | 'shard' | 'history' }} */
   let { activePage } = $props()
 </script>
 
-<nav class="navbar navbar-expand-lg sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="bi bi-shop me-2"></i>Visotaris OPMod</a>
-    <div class="navbar-nav ms-auto">
-      <a class="nav-link" class:active={activePage === 'market'} href="/">
-        <i class="bi bi-table me-1"></i>Markt
-      </a>
-      <a class="nav-link" class:active={activePage === 'shard'} href="/shard">
-        <i class="bi bi-gem me-1"></i>Shards
-      </a>
-      <a class="nav-link" class:active={activePage === 'history'} href="/history">
-        <i class="bi bi-graph-up me-1"></i>Verlauf
-      </a>
-    </div>
+<nav class="sticky top-0 z-50 flex items-center gap-4 px-4 py-2 border-b"
+     style="background-color:var(--vi-bg-card); border-color:var(--vi-border)">
+  <a href="/" class="flex items-center gap-2 font-bold tracking-wide no-underline"
+     style="color:var(--vi-accent)">
+    <Icon icon="lucide:store" width={15} />Visotaris OPMod
+  </a>
+  <div class="flex items-center gap-4 ml-auto">
+    <a href="/" class="flex items-center gap-1 text-sm no-underline transition-colors"
+       style="color:{activePage === 'market' ? 'var(--vi-text)' : 'var(--vi-text-muted)'}">
+      <Icon icon="lucide:table" width={13} />Markt
+    </a>
+    <a href="/shard" class="flex items-center gap-1 text-sm no-underline transition-colors"
+       style="color:{activePage === 'shard' ? 'var(--vi-text)' : 'var(--vi-text-muted)'}">
+      <Icon icon="lucide:gem" width={13} />Shards
+    </a>
+    <a href="/history" class="flex items-center gap-1 text-sm no-underline transition-colors"
+       style="color:{activePage === 'history' ? 'var(--vi-text)' : 'var(--vi-text-muted)'}">
+      <Icon icon="lucide:trending-up" width={13} />Verlauf
+    </a>
   </div>
 </nav>
