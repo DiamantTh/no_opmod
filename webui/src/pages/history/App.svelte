@@ -1,6 +1,7 @@
 <script>
   import { onMount, onDestroy } from 'svelte'
   import { fade } from 'svelte/transition'
+  import Icon from '@iconify/svelte'
   import Navbar from '../../components/Navbar.svelte'
   import { fmtItem, fmtInt, fmt } from '../../lib/utils.js'
 
@@ -203,43 +204,45 @@
 
 <Navbar activePage="history" />
 
-<div class="container-fluid py-3">
+<div class="w-full px-4 py-3">
 
   <!-- ── Kopfzeile ────────────────────────────────────────────────────────── -->
-  <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
-    <h5 class="mb-0"><i class="bi bi-graph-up me-2 text-info"></i>Preisverlauf</h5>
+  <div class="flex items-center gap-3 mb-3 flex-wrap">
+    <h5 class="m-0 flex items-center gap-2 font-semibold text-base">
+      <Icon icon="lucide:trending-up" width={15} style="color:var(--vi-accent)" />Preisverlauf
+    </h5>
     {#if currentMaterial}
-      <div class="d-flex align-items-center gap-2" transition:fade>
+      <div class="flex items-center gap-2" transition:fade>
         <img
           src="/api/icon/{currentMaterial}"
           class="item-icon-lg" alt=""
           onerror={(e) => e.currentTarget.style.display = 'none'}
         >
-        <span class="fw-semibold fs-6">{fmtItem(currentMaterial)}</span>
+        <span class="font-semibold text-base">{fmtItem(currentMaterial)}</span>
       </div>
     {/if}
-    <div class="ms-auto d-flex gap-2 align-items-center">
+    <div class="ml-auto flex gap-2 items-center">
       <input
         type="text"
-        class="form-control form-control-sm search-input"
+        class="search-input"
+        style="width:220px"
         placeholder="Material (z.B. diamond)"
         bind:value={materialInput}
         onkeydown={(e) => e.key === 'Enter' && loadHistory()}
-        style="width:220px"
       >
-      <button class="btn btn-sm btn-info" onclick={loadHistory} disabled={loading}>
-        <i class="bi bi-search me-1"></i>Laden
+      <button class="btn-primary" onclick={loadHistory} disabled={loading}>
+        <Icon icon="lucide:search" width={13} />Laden
       </button>
     </div>
   </div>
 
   <!-- ── Schnellauswahl ────────────────────────────────────────────────────── -->
   {#if recent.length > 0}
-    <div class="d-flex gap-2 mb-3 flex-wrap" transition:fade>
-      <span class="text-muted small align-self-center">Zuletzt:</span>
+    <div class="flex gap-2 mb-3 flex-wrap items-center" transition:fade>
+      <span class="text-sm" style="color:var(--vi-text-muted)">Zuletzt:</span>
       {#each recent as m (m)}
         <button
-          class="btn btn-xs btn-outline-secondary"
+          class="btn-outline btn-xs"
           onclick={() => { materialInput = m; loadHistory() }}
         >
           {fmtItem(m)}
@@ -252,7 +255,8 @@
   {#if loading}
     <div class="loading-overlay" transition:fade>
       <div class="text-center">
-        <div class="spinner-border text-info mb-2" role="status"></div>
+        <span class="inline-block w-6 h-6 border-2 rounded-full animate-spin mb-2 mx-auto block"
+              style="border-color:var(--vi-accent); border-top-color:transparent"></span>
         <div>Lade Verlauf für <strong>{currentMaterial}</strong>…</div>
       </div>
     </div>
@@ -260,14 +264,16 @@
 
   <!-- ── Fehler ────────────────────────────────────────────────────────────── -->
   {#if error && !loading}
-    <div class="alert alert-danger" transition:fade>{error}</div>
+    <div class="rounded p-3 mb-3 text-sm"
+         style="background:#450a0a; border:1px solid #7f1d1d; color:#fca5a5"
+         transition:fade>{error}</div>
   {/if}
 
   <!-- ── Leerer Zustand ────────────────────────────────────────────────────── -->
   {#if !loading && !error && !history && !currentMaterial}
-    <div class="loading-overlay text-muted">
+    <div class="loading-overlay" style="color:var(--vi-text-muted)">
       <div class="text-center">
-        <i class="bi bi-graph-up-arrow fs-1 mb-2 d-block opacity-25"></i>
+        <Icon icon="lucide:trending-up" width={48} class="mb-2 mx-auto block opacity-25" />
         <div>Material eingeben und <strong>Laden</strong> klicken</div>
       </div>
     </div>
@@ -275,7 +281,9 @@
 
   <!-- ── Keine Daten ───────────────────────────────────────────────────────── -->
   {#if !loading && !error && history && currentPoints.length === 0 && currentMaterial}
-    <div class="alert alert-secondary" transition:fade>
+    <div class="rounded p-3 mb-3 text-sm"
+         style="background:var(--vi-bg-card); border:1px solid var(--vi-border); color:var(--vi-text-muted)"
+         transition:fade>
       Keine Verlaufsdaten für <strong>{currentMaterial}</strong> in dieser Granularität verfügbar.
     </div>
   {/if}
@@ -284,48 +292,51 @@
   {#if !loading && history && currentPoints.length > 0}
 
     <!-- Preisentwicklung -->
-    <div class="card mb-3" transition:fade>
-      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <span>
-          <i class="bi bi-graph-up me-2 text-info"></i>Preisentwicklung
-          <small class="text-muted ms-2">{currentMaterial}</small>
+    <div class="vi-card mb-3" transition:fade>
+      <div class="vi-card-header">
+        <span class="flex items-center gap-2">
+          <Icon icon="lucide:trending-up" width={14} style="color:var(--vi-accent)" />Preisentwicklung
+          <small style="color:var(--vi-text-muted)">{currentMaterial}</small>
         </span>
-        <div class="btn-group btn-group-sm" role="group">
+        <div class="flex">
           {#each [['HOURLY','Stündlich'],['DAILY','Täglich'],['WEEKLY','Wöchentlich'],['MONTHLY','Monatlich']] as [key, label] (key)}
             <button
               type="button"
-              class="btn"
-              class:btn-info={granularity === key}
-              class:btn-outline-secondary={granularity !== key}
+              class="btn-seg"
+              class:active={granularity === key}
               onclick={() => granularity = key}
             >{label}</button>
           {/each}
         </div>
       </div>
-      <div class="card-body p-2">
+      <div class="vi-card-body">
         <div class="chart-container" bind:this={chartPriceEl}></div>
       </div>
     </div>
 
     <!-- Transaktionen -->
-    <div class="card mb-3" transition:fade>
-      <div class="card-header">
-        <i class="bi bi-arrow-left-right me-2 text-info"></i>Transaktionen
+    <div class="vi-card mb-3" transition:fade>
+      <div class="vi-card-header">
+        <span class="flex items-center gap-2">
+          <Icon icon="lucide:arrow-left-right" width={14} style="color:var(--vi-accent)" />Transaktionen
+        </span>
       </div>
-      <div class="card-body p-2">
+      <div class="vi-card-body">
         <div class="chart-container" bind:this={chartTxEl}></div>
       </div>
     </div>
 
     <!-- Gehandelte Items -->
-    <div class="card" transition:fade>
-      <div class="card-header">
-        <i class="bi bi-boxes me-2 text-warning"></i>Gehandelte Items
+    <div class="vi-card" transition:fade>
+      <div class="vi-card-header">
+        <span class="flex items-center gap-2">
+          <Icon icon="lucide:boxes" width={14} style="color:#fbbf24" />Gehandelte Items
+        </span>
       </div>
-      <div class="card-body p-2">
+      <div class="vi-card-body">
         <div class="chart-container" bind:this={chartItemsEl}></div>
       </div>
-      <div class="card-footer text-muted small d-flex justify-content-between">
+      <div class="vi-card-footer flex justify-between">
         <span>{currentPoints.length} Datenpunkte</span>
         {#if currentPoints.length > 0}<span>Zeitraum: {dateRange}</span>{/if}
       </div>
