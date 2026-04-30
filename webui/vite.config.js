@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import tailwindcss from '@tailwindcss/vite'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -7,7 +8,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const resDir    = resolve(__dirname, '../src/main/resources/assets/webui')
 
 export default defineConfig({
-  plugins: [svelte()],
+  plugins: [tailwindcss(), svelte()],
   base: '/',
   publicDir: false,
 
