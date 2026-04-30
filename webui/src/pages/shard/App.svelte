@@ -2,6 +2,7 @@
   import { flip }     from 'svelte/animate'
   import { fade }     from 'svelte/transition'
   import { cubicOut } from 'svelte/easing'
+  import Icon from '@iconify/svelte'
   import Navbar       from '../../components/Navbar.svelte'
   import { fmtItem }  from '../../lib/utils.js'
 
@@ -16,9 +17,9 @@
 
   // ── Derived ────────────────────────────────────────────────────────────────
   const statusBadgeClass = $derived(
-    loading            ? 'bg-secondary' :
-    error              ? 'badge-stale'  :
-    items.length === 0 ? 'badge-empty'  : 'badge-fresh'
+    loading            ? 'badge-secondary' :
+    error              ? 'badge-stale'     :
+    items.length === 0 ? 'badge-empty'     : 'badge-fresh'
   )
 
   const statusText = $derived(
@@ -77,22 +78,24 @@
 
 <Navbar activePage="shard" />
 
-<div class="container-fluid py-3">
+<div class="w-full px-4 py-3">
 
   <!-- ── Kopfzeile ────────────────────────────────────────────────────────── -->
-  <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
-    <h5 class="mb-0"><i class="bi bi-gem me-2 text-info"></i>Shardkurse</h5>
-    <span class="badge rounded-pill {statusBadgeClass}">{statusText}</span>
-    <div class="ms-auto d-flex gap-2">
+  <div class="flex items-center gap-3 mb-3 flex-wrap">
+    <h5 class="m-0 flex items-center gap-2 font-semibold text-base">
+      <Icon icon="lucide:gem" width={15} style="color:var(--vi-accent)" />Shardkurse
+    </h5>
+    <span class={statusBadgeClass}>{statusText}</span>
+    <div class="ml-auto flex gap-2">
       <input
         type="text"
-        class="form-control form-control-sm search-input"
+        class="search-input"
+        style="width:200px"
         placeholder="Suchen…"
         bind:value={search}
-        style="width:200px"
       >
-      <button class="btn btn-sm btn-outline-secondary" onclick={loadData} title="Aktualisieren">
-        <i class="bi bi-arrow-clockwise" class:spin={loading}></i>
+      <button class="btn-icon" onclick={loadData} title="Aktualisieren">
+        <Icon icon="lucide:refresh-cw" width={14} class={loading ? 'spin' : ''} />
       </button>
     </div>
   </div>
@@ -101,7 +104,8 @@
   {#if loading && items.length === 0}
     <div class="loading-overlay" transition:fade={{ duration: 150 }}>
       <div class="text-center">
-        <div class="spinner-border text-info mb-2" role="status"></div>
+        <span class="inline-block w-6 h-6 border-2 rounded-full animate-spin mb-2 mx-auto block"
+              style="border-color:var(--vi-accent); border-top-color:transparent"></span>
         <div>Lade Shardkurse…</div>
       </div>
     </div>
@@ -109,18 +113,20 @@
 
   <!-- ── Fehler ────────────────────────────────────────────────────────────── -->
   {#if error && !loading}
-    <div class="alert alert-danger" transition:fade>{error}</div>
+    <div class="rounded p-3 mb-3 text-sm"
+         style="background:#450a0a; border:1px solid #7f1d1d; color:#fca5a5"
+         transition:fade>{error}</div>
   {/if}
 
   <!-- ── Tabelle ───────────────────────────────────────────────────────────── -->
   {#if !loading || items.length > 0}
-    <div class="card" transition:fade={{ duration: 200 }}>
-      <div class="table-responsive">
-        <table class="table table-hover table-sm mb-0">
+    <div class="vi-card" transition:fade={{ duration: 200 }}>
+      <div class="overflow-x-auto">
+        <table class="vi-table">
           <thead>
             <tr>
               <th onclick={() => setSort('item')} class={sortCls('item')}>Material</th>
-              <th onclick={() => setSort('rate')} class="text-end {sortCls('rate')}">
+              <th onclick={() => setSort('rate')} class="text-right {sortCls('rate')}">
                 Shards / Einheit
               </th>
             </tr>
@@ -129,25 +135,25 @@
             {#each filteredItems as item (item.source)}
               <tr animate:flip={{ duration: 280, easing: cubicOut }}>
                 <td>
-                  <div class="d-flex align-items-center gap-2">
+                  <div class="flex items-center gap-2">
                     <img
                       src="/api/icon/{item.source}"
                       class="item-icon" alt=""
                       onerror={(e) => e.currentTarget.style.display = 'none'}
                     >
-                    <span class="fw-medium">{fmtItem(item.source)}</span>
+                    <span class="font-medium">{fmtItem(item.source)}</span>
                   </div>
                 </td>
-                <td class="text-end">
+                <td class="text-right">
                   <span class="price-buy">{fmtRate(item.exchangeRate)}</span>
-                  <span class="text-muted ms-1 small">OPS</span>
+                  <span class="text-sm ml-1" style="color:var(--vi-text-muted)">OPS</span>
                 </td>
               </tr>
             {/each}
           </tbody>
         </table>
       </div>
-      <div class="card-footer text-muted small d-flex justify-content-between">
+      <div class="vi-card-footer flex justify-between">
         <span>{filteredItems.length} / {items.length} Einträge</span>
         {#if lastFetch}<span>Stand: {lastFetch}</span>{/if}
       </div>
