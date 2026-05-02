@@ -7,6 +7,10 @@ plugins {
     id 'com.gradleup.shadow'                version '9.4.1'
 }
 
+// Exakte MC-Version – wird für JAR-Name genutzt.
+ext.mcVersion  = '1.21.4'
+ext.javaVersion = 21
+
 // ── Shadow / Shade-Konfiguration ─────────────────────────────────────────────
 // OkHttp + Okio werden in den Mod-JAR eingebettet (Pakete relociert, um
 // Konflikte mit anderen Mods zu vermeiden). Kotlin-Stdlib kommt von FLK.

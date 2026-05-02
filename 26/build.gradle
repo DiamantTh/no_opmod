@@ -7,6 +7,15 @@ plugins {
     id 'com.gradleup.shadow'                version '9.4.1'
 }
 
+// Exakte MC-Version – wird für JAR-Name genutzt.
+// Beim nächsten MC-Update hier und in den dependencies anpassen.
+ext.mcVersion  = '26.1.2'
+ext.javaVersion = 25    // MC 26.x + ModMenu 18.x erfordert Java 25
+
+// MC 26.x ist nicht obfuskiert → Loom darf keinen Mappings-/Remapping-Setup durchführen.
+// Muss per ext gesetzt werden, damit Looms lazy Provider es in afterEvaluate findet.
+ext['fabric.loom.disableObfuscation'] = 'true'
+
 // ── Shadow / Shade-Konfiguration ─────────────────────────────────────────────
 // OkHttp + Okio werden in den Mod-JAR eingebettet (Pakete relociert, um
 // Konflikte mit anderen Mods zu vermeiden). Kotlin-Stdlib kommt von FLK.
@@ -18,24 +27,20 @@ configurations {
 // version & group kommen aus dem Root-build.gradle (subprojects-Block)
 
 dependencies {
-    // Minecraft + Mappings
+    // Minecraft – MC 26.x ist nicht obfuskiert, daher keine mappings-Zeile
     //noinspection LoomDependencyNotation
     minecraft "com.mojang:minecraft:26.1.2"
-    // Yarn-Mappings: auf https://fabricmc.net/develop/ prüfen sobald build.x verfügbar
-    //noinspection LoomDependencyNotation
-    mappings  "net.fabricmc:yarn:26.1.2+build.1:v2"
 
-    // Fabric Loader + API
-    //noinspection LoomDependencyNotation
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    //noinspection LoomDependencyNotation
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.146.1+26.1.2"
+    // Fabric Loader + API (implementation, nicht modImplementation – kein Remapping nötig)
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:0.146.1+26.1.2"
 
-    // Mod Menu (1.21.11 → Reihe 17.x)
-    modImplementation "com.terraformersmc:modmenu:17.0.0"
+    // Mod Menu (MC 26.1.x → Reihe 18.x)
+    // kein modImplementation: im disableObfuscation-Modus gibt es keine Remap-Konfigurationen
+    implementation "com.terraformersmc:modmenu:18.0.0-alpha.8"
 
     // Kotlin Runtime (fabric-language-kotlin stellt Stdlib + Coroutinen bereit)
-    modImplementation "net.fabricmc:fabric-language-kotlin:${fabric_language_kotlin_version}"
+    implementation "net.fabricmc:fabric-language-kotlin:${fabric_language_kotlin_version}"
 
     // OkHttp 5 + Okio – im Mod-JAR eingebettet via shadowJar
     // Die Kotlin-Stdlib kommt von fabric-language-kotlin (FLK), daher exclude.
@@ -64,11 +69,12 @@ dependencies {
 }
 
 loom {
-    accessWidenerPath = rootProject.file("src/main/resources/visotaris_opmod.accesswidener")
+    // 26.x hat eigene AW-Datei mit official-Namespace (Mojang-Klassennamen)
+    accessWidenerPath = project.file("src/main/resources/visotaris_opmod.accesswidener")
     runs {
         client {
             client()
-            setConfigName "Visotaris (1.21.11)"
+            setConfigName "Visotaris (26.x)"
             ideConfigGenerated true
             runDir "run"
         }
@@ -81,36 +87,62 @@ base {
 
 // ── Kotlin-Konfiguration ─────────────────────────────────────────────────────
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    // Kotlin 2.2.21 kennt JvmTarget.JVM_25 noch nicht → JVM_24 als Bytecode-Target;
+    // Java-Klassen landen auf JVM 25, Kotlin auf JVM 24 – beide laufen auf JDK 25.
+    // Die Mismatch-Validation ist in 26/gradle.properties auf WARNING gesetzt.
     compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
         freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
 
-// Gemeinsamen Kotlin-Quellpfad einhängen
+// Gemeinsamen Kotlin-Quellpfad einhängen.
+// Dateien in project/src/main/kotlin ÜBERSCHREIBEN gleichnamige aus dem Root.
+// Root-afterEvaluate hängt rootProject/src/main/kotlin als plain srcDir ein;
+// unser eigenes afterEvaluate (läuft danach) ersetzt es durch einen gefilterten FileTree.
+def ktOverrides = [
+    'systems/diath/visotaris_opmod/web/WebServer.kt',
+]
+
 sourceSets {
     main {
         kotlin {
-            srcDir rootProject.file('src/main/kotlin')
+            // Nur 26-spezifische Sources hier; Root-Quellen werden in afterEvaluate eingebunden.
             srcDir project.file('src/main/kotlin')
+        }
+        java {
+            srcDir project.file('src/main/java')
         }
     }
 }
 
-// ── Shadow / Remap-JAR-Pipeline ───────────────────────────────────────────────
+// Root-afterEvaluate fügt rootProject/src/main/kotlin als plain srcDir hinzu.
+// Wir laufen danach und filtern die überschriebenen Dateien via exclude() am Task-Level
+// (SourceTask.exclude ist ein Spec-Filter, kein Property-Read → funktioniert mit write-only source).
+afterEvaluate {
+    def toExclude = ktOverrides.collect { f ->
+        rootProject.file("src/main/kotlin/$f").canonicalPath
+    }.toSet()
+    tasks.named('compileKotlin') {
+        exclude { fte -> toExclude.contains(fte.file.canonicalPath) }
+    }
+}
+
+// ── Shadow-JAR-Pipeline (kein remapJar im disableObfuscation-Modus) ──────────
+// MC 26.x ist nicht obfuskiert → kein remapJar-Schritt nötig.
 // 1. jar      → Projektkl. ohne Shading  (classifier: dev)
-// 2. shadowJar → Projektkl. + OkHttp/Okio  (classifier: dev-shadow)
-// 3. remapJar  → shadowJar remappen       (kein Classifier – finaler Mod-JAR)
+// 2. shadowJar → Projektkl. + Shade-Deps (kein Classifier – finaler Mod-JAR)
 jar {
     archiveClassifier = 'dev'
 }
 
 shadowJar {
     configurations    = [project.configurations.shade]
-    archiveClassifier = 'dev-shadow'
+    archiveClassifier = ''
     // Paket-Relokation: verhindert Konflikte zur Laufzeit mit anderen Mods
     relocate 'okhttp3',                      'systems.diath.visotaris_opmod.shade.okhttp3'
     relocate 'okio',                         'systems.diath.visotaris_opmod.shade.okio'
@@ -119,7 +151,10 @@ shadowJar {
     relocate 'io.ktor',                          'systems.diath.visotaris_opmod.shade.ktor'
 }
 
-remapJar {
-    inputFile.set(shadowJar.archiveFile)
-    dependsOn(shadowJar)
+assemble.dependsOn shadowJar
+
+// processResources: das Root-AW (named-Namespace) kollidiert mit dem 26-spezifischen AW
+// (official-Namespace). EXCLUDE → das zuerst gefundene Projekt-AW gewinnt.
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
