@@ -43,6 +43,8 @@ public final class ConfigManager {
         try (CommentedFileConfig toml = CommentedFileConfig.builder(configPath, TomlFormat.instance()).build()) {
             toml.load();
             VisotarisConfig c = new VisotarisConfig();
+            // ── Modus ─────────────────────────────────────────────────────────────────
+            c.observerModeOnly = toml.getOrElse("modus.observerModeOnly", toml.getOrElse("observerModeOnly", c.observerModeOnly));
             // ── Anzeige (neu: anzeige.x; alt: x) ─────────────────────────────────────
             c.showMarketTooltips   = toml.getOrElse("anzeige.showMarketTooltips",   toml.getOrElse("showMarketTooltips",   c.showMarketTooltips));
             c.showHud              = toml.getOrElse("anzeige.showHud",              toml.getOrElse("showHud",              c.showHud));
@@ -84,6 +86,9 @@ public final class ConfigManager {
         }
         try (CommentedFileConfig toml = CommentedFileConfig.builder(configPath, TomlFormat.instance()).build()) {
             VisotarisConfig c = config;
+            // ── [modus] ───────────────────────────────────────────────────────────────
+            toml.setComment("modus", " Observer-Modus: nur Datenabruf, keine Ingame-Eingriffe");
+            toml.set("modus.observerModeOnly", c.observerModeOnly);
             // ── [anzeige] ─────────────────────────────────────────────────────────────
             toml.setComment("anzeige", " HUD, Tooltips und UI-Overlays");
             toml.set("anzeige.showMarketTooltips",   c.showMarketTooltips);

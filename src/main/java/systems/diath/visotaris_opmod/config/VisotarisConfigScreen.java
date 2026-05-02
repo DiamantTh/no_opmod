@@ -98,6 +98,11 @@ public final class VisotarisConfigScreen extends Screen {
         int fw = BTN_W * 2 + COL_GAP;  // Breite für volle-Breite-Buttons
         int y  = 4;
 
+        // ── Modus ───────────────────────────────────────────────────────────
+        addLabel("Modus", y);                                y += CAT_H + CAT_GAP;
+        addObserverToggle(cx - fw / 2, y, fw);
+        y += BTN_H + BTN_GAP + SEC_GAP;
+
         // ── Anzeige ─────────────────────────────────────────────────────────
         addLabel("Anzeige", y);                              y += CAT_H + CAT_GAP;
         addToggle(lx, y, "Markt-Tooltips",        cfg.showMarketTooltips,   v -> { cfg.showMarketTooltips = v;   if (v) triggerDataRefresh(); });
@@ -294,6 +299,39 @@ public final class VisotarisConfigScreen extends Screen {
 
     private void addToggle(int x, int baseY, String label, boolean initial, Consumer<Boolean> setter) {
         addToggle(x, baseY, label, initial, setter, null, null);
+    }
+
+    /** Volle-Breite-Toggle für den Observer-Modus mit Bestätigungs-Dialog beim Aktivieren. */
+    private void addObserverToggle(int x, int baseY, int width) {
+        boolean[] state = {cfg.observerModeOnly};
+        ButtonWidget btn = ButtonWidget.builder(
+                makeObserverText(state[0]),
+                b -> {
+                    boolean enabling = !state[0];
+                    if (enabling) {
+                        this.client.setScreen(new ConfirmScreen(
+                                confirmed -> {
+                                    if (confirmed) {
+                                        cfg.observerModeOnly = true;
+                                    }
+                                    this.client.setScreen(VisotarisConfigScreen.this);
+                                },
+                                Text.literal("\u00a76\u26a0 Observer-Modus aktivieren?"),
+                                Text.literal("Deaktiviert ALLE Ingame-Eingriffe (Tooltips, HUD, Container-Overlay,\nSchutzlogik, Job-Tracker, Command-Kurzformen, Discord RPC).\nNur Marktdaten werden weiter abgerufen.")
+                        ));
+                    } else {
+                        state[0] = false;
+                        cfg.observerModeOnly = false;
+                        b.setMessage(makeObserverText(false));
+                    }
+                }
+        ).dimensions(x, 0, width, BTN_H).build();
+        addContent(btn, baseY);
+    }
+
+    private static Text makeObserverText(boolean v) {
+        return Text.literal("Observer-Modus (nur Datenabruf): "
+                + (v ? "\u00a7aAN" : "\u00a7cAUS"));
     }
 
     private void addToggle(int x, int baseY, String label, boolean initial, Consumer<Boolean> setter,

@@ -10,6 +10,20 @@ package systems.diath.visotaris_opmod.config;
  */
 public final class VisotarisConfig {
 
+    // ── Modus ─────────────────────────────────────────────────────────────────
+    /**
+     * Observer-Modus: deaktiviert sämtliche Ingame-Eingriffe (Tooltips, HUD,
+     * Container-Overlay, Quick-Buttons, Schutzlogik, Offhand-Blocker, Job-Tracker,
+     * Command-Kurzformen, Amboss-Normalisierung, Discord RPC).
+     *
+     * Aktiv bleiben ausschließlich:
+     *   - Hintergrund-Datenabruf (Markt + Merchant/Shard)
+     *   - Caches + Persistenz
+     *   - Web-UI (sofern separat aktiviert)
+     *   - Settings-/Refresh-Keybinds
+     */
+    public boolean observerModeOnly = false;
+
     // ── Anzeige ───────────────────────────────────────────────────────────────
     public boolean showMarketTooltips   = true;
     public boolean showHud              = true;
@@ -38,4 +52,12 @@ public final class VisotarisConfig {
     public int     proxyPort      = 0;
     public String  apiKey         = "";             // non-leer → Header "Authorization: Bearer <key>"
     public String  customUserAgent = "";            // leer = auto "Visotaris-OPMod/<ver> (…)"
+
+    /**
+     * Convenience: liefert {@code true}, wenn Ingame-Eingriffe (Tooltips, HUD,
+     * Mixins, Schutzlogik etc.) erlaubt sind. Im Observer-Modus deaktiviert.
+     */
+    public boolean ingameFeaturesEnabled() {
+        return !observerModeOnly;
+    }
 }
