@@ -49,11 +49,9 @@ public final class MarketApiClient {
     private static final String ENDPOINT   = "https://api.opsucht.net/market/prices";
     private static final Gson   GSON       = new Gson();
 
-    private final ConfigManager configManager;
     private final OkHttpClient  httpClient;
 
     public MarketApiClient(ConfigManager configManager) {
-        this.configManager = configManager;
         this.httpClient = VisotarisConst.buildOkHttpClient(configManager.getConfig())
             .newBuilder()
             .cache(new Cache(VisotarisConst.getCacheDir("market"), 5L * 1024 * 1024))

@@ -26,6 +26,7 @@ import java.util.Optional;
 public final class InventoryValuationService {
 
     private final MarketCache   marketCache;
+    @SuppressWarnings("unused") // TODO: Shard-Bewertung (siehe evaluate())
     private final ShardCache    shardCache;
     private final ConfigManager config;
 

@@ -113,6 +113,7 @@ public final class JsonCachePersistence<T> {
                 new FileInputStream(file), StandardCharsets.UTF_8)) {
 
             JsonObject root = GSON.fromJson(r, JsonObject.class);
+            //noinspection ConstantConditions – GSON kann bei JSON-null-Wert null liefern
             if (root == null) return null;
 
             long savedAtMs = 0L;

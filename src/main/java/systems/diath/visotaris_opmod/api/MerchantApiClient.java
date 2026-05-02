@@ -55,11 +55,9 @@ public final class MerchantApiClient {
     /** Extrahiert den Wert von custom_model_data=NNN aus einem komplexen MC-Komponentenstring. */
     private static final Pattern CMD_PATTERN = Pattern.compile("custom_model_data=(\\d+)");
 
-    private final ConfigManager configManager;
     private final OkHttpClient  httpClient;
 
     public MerchantApiClient(ConfigManager configManager) {
-        this.configManager = configManager;
         this.httpClient = VisotarisConst.buildOkHttpClient(configManager.getConfig())
             .newBuilder()
             .cache(new Cache(VisotarisConst.getCacheDir("merchant"), 2L * 1024 * 1024))

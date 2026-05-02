@@ -109,6 +109,7 @@ public final class VisotarisCommands {
         );
     }
 
+    @SuppressWarnings("null")
     private static void send(FabricClientCommandSource source, String text) {
         source.sendFeedback(Text.literal(text));
     }
