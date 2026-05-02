@@ -41,6 +41,9 @@ public final class TooltipValueService {
      * Wird direkt im ItemTooltipCallback auf dem Client-Thread aufgerufen.
      */
     public void appendTooltips(ItemStack stack, List<Text> lines) {
+        var cfg = config.getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return;
+        if (!cfg.showMarketTooltips) return;
         if (stack.isEmpty()) return;
 
         String baseKey = resolveBaseKey(stack);

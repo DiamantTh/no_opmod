@@ -93,6 +93,7 @@ public final class PendingConfirmationService {
      */
     public Intercepted tryIntercept(String rawCommand) {
         var cfg = config.getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return null;
 
         PendingAction.Type type;
         String prefix;

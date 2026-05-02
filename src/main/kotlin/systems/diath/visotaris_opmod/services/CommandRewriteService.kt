@@ -23,7 +23,9 @@ class CommandRewriteService(private val config: ConfigManager) {
      * Wird mit MODIFY_COMMAND vor ALLOW_COMMAND aufgerufen.
      */
     fun rewrite(rawCommand: String): String {
-        if (!config.getConfig().enableCommandShortforms) return rawCommand
+        val cfg = config.getConfig()
+        if (!cfg.ingameFeaturesEnabled()) return rawCommand
+        if (!cfg.enableCommandShortforms) return rawCommand
 
         // Nur bekannte Geld-Commands umschreiben
         val lower = rawCommand.trimStart('/').lowercase()

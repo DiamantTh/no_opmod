@@ -80,7 +80,9 @@ public final class JobTrackerService {
 
     /** Wird vom Fabric-Chat-Event auf dem Client-Thread aufgerufen. */
     public void processMessage(String rawText) {
-        if (!config.getConfig().enableJobTracker) return;
+        var cfg = config.getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return;
+        if (!cfg.enableJobTracker) return;
         // Zeilen mit '»' sind OPSUCHT-Aktions-/Systemnachrichten, kein Job-Update.
         if (rawText.contains("»")) return;
 

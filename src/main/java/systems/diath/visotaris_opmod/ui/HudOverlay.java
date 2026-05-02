@@ -25,6 +25,7 @@ public final class HudOverlay {
     private static final int COLOR_JOB   = 0xFFFFD700;
 
     private final JobTrackerService          jobTracker;
+    @SuppressWarnings("unused") // TODO: Inventarwert im HUD anzeigen
     private final InventoryValuationService  valuation;
     private final ConfigManager              config;
 
@@ -42,13 +43,15 @@ public final class HudOverlay {
 
     /** Wird per HudRenderCallback.EVENT registriert. */
     public void render(DrawContext ctx, RenderTickCounter tickCounter) {
-        if (!config.getConfig().showHud) return;
+        var cfg = config.getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return;
+        if (!cfg.showHud) return;
 
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null || mc.options.hudHidden) return;
 
         renderJobInfo(ctx, mc);
-        if (config.getConfig().enableInventoryWarning) renderInventoryWarning(ctx, mc);
+        if (cfg.enableInventoryWarning) renderInventoryWarning(ctx, mc);
     }
 
     // ── Job-Info ────────────────────────────────────────────────────────────

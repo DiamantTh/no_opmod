@@ -8,12 +8,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
-import systems.diath.visotaris_opmod.VisotarisConst;
 import systems.diath.visotaris_opmod.api.MarketHistoryApiClient;
 import systems.diath.visotaris_opmod.cache.MarketCache;
 import systems.diath.visotaris_opmod.cache.PriceHistoryCache;
@@ -91,9 +88,10 @@ public class VisotarisModClient implements ClientModInitializer {
         );
 
         // 4a. Command-Kurzformen expandieren (läuft VOR ALLOW_COMMAND)
-        ClientSendMessageEvents.MODIFY_COMMAND.register(cmd ->
-            commandRewriteService.rewrite(cmd)
-        );
+        ClientSendMessageEvents.MODIFY_COMMAND.register(cmd -> {
+            String result = commandRewriteService.rewrite(cmd);
+            return result != null ? result : cmd;
+        });
 
         // 4b. /rename und /sign abfangen
         ClientSendMessageEvents.ALLOW_COMMAND.register(command -> {
@@ -138,7 +136,9 @@ public class VisotarisModClient implements ClientModInitializer {
 
         // 10. Offhand-Blocker: Tastendrücke für F-Taste vor handleInputEvents() schlucken
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            if (!configManager.getConfig().enableOffhandBlocker) return;
+            var cfg = configManager.getConfig();
+            if (!cfg.ingameFeaturesEnabled()) return;
+            if (!cfg.enableOffhandBlocker) return;
             if (client.options == null) return;
             //noinspection StatementWithEmptyBody
             while (client.options.swapHandsKey.wasPressed()) { /* blockiert */ }

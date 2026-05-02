@@ -66,6 +66,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
         if (!isContainer) return;
 
         var cfg = mod.getConfigManager().getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return;
         if (cfg.showContainerOverlay || cfg.showMarketTooltips) {
             // Cache-Alter prüfen: nur refreshen wenn Daten >5 Minuten alt oder nie geladen
             if (mod.getMarketCache().isStale(300))    mod.getMarketSyncService().refresh();
@@ -91,6 +92,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
         if (!isContainer) return;
 
         var cfg = mod.getConfigManager().getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return;
 
         if (cfg.showContainerOverlay) renderContainerOverlay(ctx, mod);
         if (cfg.showQuickButtons)     renderQuickButtons(ctx, mouseX, mouseY);
@@ -103,6 +105,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> {
     private void renderContainerOverlay(DrawContext ctx, VisotarisModClient mod) {
         // Alle Slot-Stacks sammeln
         T handler = getScreenHandler();
+        if (handler.slots == null) return;
         List<ItemStack> stacks = new ArrayList<>(handler.slots.size());
         for (Slot slot : handler.slots) stacks.add(slot.getStack());
 

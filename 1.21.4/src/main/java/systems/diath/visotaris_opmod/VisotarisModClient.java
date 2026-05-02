@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
-import systems.diath.visotaris_opmod.VisotarisConst;
 import systems.diath.visotaris_opmod.api.MarketHistoryApiClient;
 import systems.diath.visotaris_opmod.cache.MarketCache;
 import systems.diath.visotaris_opmod.cache.PriceHistoryCache;
@@ -134,7 +133,9 @@ public class VisotarisModClient implements ClientModInitializer {
 
         // 10. Offhand-Blocker: Tastendrücke für F-Taste vor handleInputEvents() schlucken
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            if (!configManager.getConfig().enableOffhandBlocker) return;
+            var cfg = configManager.getConfig();
+            if (!cfg.ingameFeaturesEnabled()) return;
+            if (!cfg.enableOffhandBlocker) return;
             if (client.options == null) return;
             //noinspection StatementWithEmptyBody
             while (client.options.swapHandsKey.wasPressed()) { /* blockiert */ }

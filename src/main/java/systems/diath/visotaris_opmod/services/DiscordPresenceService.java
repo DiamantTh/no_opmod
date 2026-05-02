@@ -37,6 +37,7 @@ public final class DiscordPresenceService {
     // ── Private Lifecycle ─────────────────────────────────────────────────────
 
     private void onJoin() {
+        if (!config.getConfig().ingameFeaturesEnabled()) return;
         if (!config.getConfig().enableDiscordRpc) return;
         VisotarisLogger.debug("DiscordPresence: JOIN – RPC aktiv");
         active = true;

@@ -54,7 +54,9 @@ public abstract class AnvilScreenMixin {
 
         VisotarisModClient mod = VisotarisModClient.getInstance();
         if (mod == null) return;
-        if (!mod.getConfigManager().getConfig().enableAnvilNormalization) return;
+        var cfg = mod.getConfigManager().getConfig();
+        if (!cfg.ingameFeaturesEnabled()) return;
+        if (!cfg.enableAnvilNormalization) return;
 
         Matcher m = SHORTHAND_FULL.matcher(text);
         if (!m.matches()) return;
